@@ -1,0 +1,15 @@
+meta {
+  name: GET Objects
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{protocol}}://{{host}}:{{port}}/v1/objects?limit=30
+  body: none
+  auth: inherit
+}
+
+params:query {
+  limit: 30
+}

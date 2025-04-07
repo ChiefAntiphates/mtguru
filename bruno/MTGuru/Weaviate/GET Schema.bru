@@ -1,0 +1,11 @@
+meta {
+  name: GET Schema
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}://{{host}}:{{port}}/v1/schema
+  body: none
+  auth: inherit
+}
