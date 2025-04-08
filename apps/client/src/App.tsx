@@ -1,10 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+const SERVER_URL =  "http://localhost:8888"
+
 function App() {
   const [count, setCount] = useState(0)
+  const [time, setTime] = useState<string>('')
+
+  useEffect(() => {
+    fetch(`${SERVER_URL}/clicks`, {
+      method: "POST",
+      body: JSON.stringify({
+        clicks: count
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+  }, [count])
 
   return (
     <>
@@ -18,6 +33,10 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
+        <button onClick={() => fetch(`${SERVER_URL}/time`).then(response => response.text()).then(data => setTime(data))}>
+          Get time from Go
+        </button>
+        {time != '' && <p>Go thinks the time is {time}</p>}
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
