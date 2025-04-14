@@ -29,7 +29,7 @@ func main() {
 	// populateIndex(client)
 
 	// example query to get cards with a specific concept
-	concept := "spells to draw cards"
+	concept := "use toughness to attack the enemy"
 
 	ctx := context.Background()
 	response, err := client.GraphQL().Get().
@@ -50,7 +50,7 @@ func main() {
 		).
 		WithNearText(client.GraphQL().NearTextArgBuilder().
 			WithConcepts([]string{concept})).
-		WithLimit(10).
+		WithLimit(5).
 		Do(ctx)
 
 	if err != nil {
@@ -352,6 +352,7 @@ func populateIndex(client *weaviate.Client) {
 }
 
 func parseCardsFromFile() []Card {
+
 	jsonFile, err := os.Open("default-cards-20250404213404.json")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -365,11 +366,28 @@ func parseCardsFromFile() []Card {
 
 	fmt.Println("Number of cards:", len(cards))
 
-	for i := 0; i < len(cards); i++ {
-		fmt.Printf("Card ID: "+cards[i].ScryfallID+" Remaining cards: %d\n", len(cards)-i-1)
-	}
+	var uniqueCards []Card
+	var duplicateCards []Card
+	oracleIDMap := make(map[string]bool)
 
-	return cards
+	for _, card := range cards {
+		if oracleIDMap[card.OracleID] {
+			duplicateCards = append(duplicateCards, card)
+		} else {
+			oracleIDMap[card.OracleID] = true
+			uniqueCards = append(uniqueCards, card)
+		}
+	}
+	cards = uniqueCards
+
+	fmt.Println("Number of total cards: ", len(cards))
+	fmt.Println("Number of unique cards:", len(uniqueCards))
+	fmt.Println("Number of duplicate cards:", len(duplicateCards))
+	// for i := 0; i < len(cards); i++ {
+	// 	fmt.Printf("Card ID: "+cards[i].ScryfallID+" Remaining cards: %d\n", len(cards)-i-1)
+	// }
+
+	return uniqueCards
 }
 
 type Card struct {
