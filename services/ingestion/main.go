@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/pelletier/go-toml/v2"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/auth"
+
+	"mtguru/packages/custom_logger"
 )
 
 type EnvironmentConfig struct {
@@ -23,9 +25,11 @@ type Environments struct {
 	Prod      EnvironmentConfig `toml:"prod"`
 }
 
-func createClient(conf EnvironmentConfig) {
+func init() {
+	custom_logger.CreateLogger()
+}
 
-	fmt.Println("Test")
+func createClient(conf EnvironmentConfig) {
 
 	cfg := weaviate.Config{
 		Host:       conf.WEAVIATE_URL,
@@ -36,31 +40,31 @@ func createClient(conf EnvironmentConfig) {
 
 	client, err := weaviate.NewClient(cfg)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 	}
 
 	live, err := client.Misc().LiveChecker().Do(context.Background())
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 	}
-	fmt.Printf("%v", live)
+
+	slog.Info("%v", live)
 
 }
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	file, err := os.Open("config.toml")
 
 	if err != nil {
-		log.Println(err)
+		slog.Error(err.Error())
 	}
 
 	defer file.Close()
 
 	configBytes, err := io.ReadAll(file)
 	if err != nil {
-		log.Println("Error reading file:", err)
+		slog.Error(err.Error())
 		return
 	}
 
@@ -68,7 +72,7 @@ func main() {
 
 	err = toml.Unmarshal(configBytes, &cfg)
 	if err != nil {
-		log.Println("Error unmarshalling TOML:", err)
+		slog.Error(err.Error())
 		return
 	}
 
@@ -82,14 +86,14 @@ func main() {
 	case "prod":
 		activeConfig = cfg.Prod
 	default:
-		log.Println("Unknown environment:", env)
+		slog.Info("Unknown environment:", env, ". Defaulting to localhost")
 		activeConfig = cfg.Localhost // Default to localhost if unknown
 	}
 
-	fmt.Println("Config loaded successfully")
-	fmt.Println("WEAVIATE_URL:", activeConfig.WEAVIATE_URL)
-	fmt.Println("WEAVIATE_API_KEY:", activeConfig.WEAVIATE_API_KEY)
-	fmt.Println("OPEN_API_KEY:", activeConfig.OPEN_API_KEY)
+	slog.Info("Config loaded successfully")
+	slog.Info("WEAVIATE_URL", "weaviate_url", activeConfig.WEAVIATE_URL)
+	slog.Info("WEAVIATE_API_KEY:", "weaviate_api_key", activeConfig.WEAVIATE_API_KEY)
+	slog.Info("OPEN_API_KEY:", "open_api_key", activeConfig.OPEN_API_KEY)
 
 	createClient(activeConfig)
 }

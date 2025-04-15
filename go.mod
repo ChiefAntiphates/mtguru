@@ -1,8 +1,9 @@
-module services
+module mtguru
 
 go 1.24.0
 
 require (
+	github.com/fatih/color v1.18.0
 	github.com/pelletier/go-toml/v2 v2.2.4
 	github.com/rs/cors v1.11.1
 	github.com/weaviate/weaviate-go-client/v4 v4.16.1
@@ -21,8 +22,9 @@ require (
 	github.com/go-openapi/validate v0.21.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/lmittmann/tint v1.0.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
