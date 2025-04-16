@@ -5,11 +5,15 @@ meta {
 }
 
 get {
-  url: {{protocol}}://{{host}}:{{port}}/v1/objects?limit=30
+  url: {{protocol}}://{{weaviate_host}}/v1/objects?limit=30
   body: none
   auth: inherit
 }
 
 params:query {
   limit: 30
+}
+
+headers {
+  Authorization: Bearer {{weaviate_api_key}}
 }

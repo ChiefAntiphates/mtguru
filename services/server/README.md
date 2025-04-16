@@ -1,1 +1,0 @@
-Basic web server in Go with two endpoints: one GET and one POST.
