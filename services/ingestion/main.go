@@ -47,7 +47,7 @@ func createClient(conf EnvironmentConfig) *weaviate.Client {
 
 func searchDatabase(client *weaviate.Client) {
 
-	search_string := "make dragons stronger"
+	search_string := "make my units fly"
 
 	ctx := context.Background()
 	response, err := client.GraphQL().Get().
@@ -78,6 +78,7 @@ func searchDatabase(client *weaviate.Client) {
 		slog.Debug(err.Error())
 	}
 
+	slog.Info("Prompt:", "prompt", search_string)
 	slog.Info("Response:", "matches", response)
 
 }
