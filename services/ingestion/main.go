@@ -47,6 +47,8 @@ func createClient(conf EnvironmentConfig) *weaviate.Client {
 
 func searchDatabase(client *weaviate.Client) {
 
+	search_string := "make dragons stronger"
+
 	ctx := context.Background()
 	response, err := client.GraphQL().Get().
 		WithClassName("Mtguru").
@@ -68,7 +70,7 @@ func searchDatabase(client *weaviate.Client) {
 				{Name: "distance"}}},
 		).
 		WithNearText(client.GraphQL().NearTextArgBuilder().
-			WithConcepts([]string{"make dragons stronger"})).
+			WithConcepts([]string{search_string})).
 		WithLimit(3).
 		Do(ctx)
 
