@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
+	"net/http"
 
+	"github.com/rs/cors"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/auth"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
@@ -12,10 +15,12 @@ import (
 )
 
 var activeConfig EnvironmentConfig
+var client *weaviate.Client
 
 func init() {
 	custom_logger.CreateLogger()
 	activeConfig = CreateConfig()
+	client = createClient(activeConfig)
 }
 
 func createClient(conf EnvironmentConfig) *weaviate.Client {
@@ -45,9 +50,9 @@ func createClient(conf EnvironmentConfig) *weaviate.Client {
 
 }
 
-func searchDatabase(client *weaviate.Client) {
+func searchDatabase(search_string string) {
 
-	search_string := "make my units fly"
+	// search_string := "make my units fly"
 
 	ctx := context.Background()
 	response, err := client.GraphQL().Get().
@@ -83,9 +88,44 @@ func searchDatabase(client *weaviate.Client) {
 
 }
 
+func alive(w http.ResponseWriter, r *http.Request) {
+	slog.Info("I'm alive!")
+}
+
+type MTGuruSearchRequest struct {
+	Query   string            `json:"query"`
+	Filters map[string]string `json:"filters"`
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+
+	var requestBody MTGuruSearchRequest
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	if err != nil {
+		slog.Debug("Error decoding request body", "error", err.Error())
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	slog.Info("Received search request:", "query", requestBody.Query, "filters", requestBody.Filters)
+	searchDatabase(requestBody.Query)
+}
+
+func initHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /api/health", alive)
+	mux.HandleFunc("POST /api/search", searchHandler)
+	return cors.Default().Handler(mux)
+
+}
+
 func main() {
-	client := createClient(activeConfig)
 	// createIndex(client)
 	// populateIndex(client)
-	searchDatabase(client)
+	// searchDatabase(client)
+	handler := initHandler()
+	slog.Info("Starting server on port 8080...")
+	http.ListenAndServe(":8080", handler)
+
 }

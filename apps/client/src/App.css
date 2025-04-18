@@ -43,19 +43,17 @@
 
 .app {
   min-height: 100vh;
-  width: 100%;
-  background-color: #1a1614; /* Dark brown background */
-  color: #e4d5b7; /* Warm light text color */
+  background-color: #1a1614;
+  color: #e4d5b7;
   display: flex;
   flex-direction: column;
 }
 
 .app-header {
-  background: linear-gradient(180deg, #2d1f2f 0%, #1a1614 100%); /* Purple to dark brown gradient */
+  background: linear-gradient(180deg, #2d1f2f 0%, #1a1614 100%);
   color: #e4d5b7;
   padding: 2rem 1rem 3.5rem;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   width: 100%;
   position: relative;
 }
@@ -64,7 +62,43 @@
   width: 400px;
   height: 400px;
   margin: 0 auto;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); /* Golden glow */
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+  position: relative;
+  z-index: 1;
+}
+
+.app-header h1 {
+  margin: -3rem 0 0;
+  font-size: 5.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  position: relative;
+  z-index: 2;
+  text-shadow: 
+    0 0 7px rgba(255, 215, 0, 0.3),
+    0 0 10px rgba(116, 79, 198, 0.3),
+    0 0 21px rgba(76, 149, 207, 0.2);
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+.app-header p {
+  margin: 0.5rem 0 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+  color: #e4d5b7;
+  position: relative;
+  z-index: 2;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: -2rem auto 0;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
   z-index: 1;
 }
@@ -90,40 +124,6 @@
   }
 }
 
-.app-header h1 {
-  margin: -3rem 0 0;
-  font-size: 5.5rem;
-  font-weight: bold;
-  color: #ffd700; /* Golden text */
-  position: relative;
-  z-index: 2;
-  text-shadow: 
-    0 0 7px rgba(255, 215, 0, 0.3),
-    0 0 10px rgba(116, 79, 198, 0.3),
-    0 0 21px rgba(76, 149, 207, 0.2);
-  animation: titleGlow 3s ease-in-out infinite;
-}
-
-.app-header p {
-  margin: 0.5rem 0 0;
-  font-size: 1.2rem;
-  opacity: 0.9;
-  color: #e4d5b7;
-  position: relative;
-  z-index: 2;
-}
-
-.app-main {
-  flex: 1;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 @media (max-width: 768px) {
   .app-logo {
     width: 280px;
@@ -145,5 +145,6 @@
   
   .app-main {
     padding: 1rem;
+    margin-top: -1.5rem;
   }
 }

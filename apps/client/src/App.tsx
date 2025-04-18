@@ -20,14 +20,14 @@ function App() {
 
   const handleSearch = async (query: string) => {
     try {
-      const response = await fetch('http://localhost:8080/search', {
+      const response = await fetch('http://localhost:8080/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query,
-          filters,
+          "query": query,
+          "filters": filters
         }),
       })
 
