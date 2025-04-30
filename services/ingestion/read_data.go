@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
+	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
 	"github.com/weaviate/weaviate/entities/models"
 )
 
@@ -18,30 +19,30 @@ func init() {
 }
 
 type Card struct {
-	Object        string `json:"object"`
-	ScryfallID    string `json:"id"`
-	OracleID      string `json:"oracle_id"`
-	MultiverseIDs []int  `json:"multiverse_ids"`
-	MtgoID        int    `json:"mtgo_id"`
-	TcgplayerID   int    `json:"tcgplayer_id"`
-	Name          string `json:"name"`
-	ReleasedAt    string `json:"released_at"`
-	ScryfallURI   string `json:"scryfall_uri"`
-	// ImageURIs     map[string]string  `json:"image_uris"`
-	ManaCost      string   `json:"mana_cost"`
-	Cmc           float64  `json:"cmc"`
-	TypeLine      string   `json:"type_line"`
-	OracleText    string   `json:"oracle_text"`
-	Power         string   `json:"power"`
-	Toughness     string   `json:"toughness"`
-	Defence       string   `json:"defense"`
-	Loyalty       string   `json:"loyalty"`
-	HandModifier  string   `json:"hand_modifier"`
-	LifeModifier  string   `json:"life_modifier"`
-	Colors        []string `json:"colors"`
-	ColorIdentity []string `json:"color_identity"`
-	Keywords      []string `json:"keywords"`
-	ProducedMana  []string `json:"produced_mana"`
+	Object        string            `json:"object"`
+	ScryfallID    string            `json:"id"`
+	OracleID      string            `json:"oracle_id"`
+	MultiverseIDs []int             `json:"multiverse_ids"`
+	MtgoID        int               `json:"mtgo_id"`
+	TcgplayerID   int               `json:"tcgplayer_id"`
+	Name          string            `json:"name"`
+	ReleasedAt    string            `json:"released_at"`
+	ScryfallURI   string            `json:"scryfall_uri"`
+	ImageURIs     map[string]string `json:"image_uris"`
+	ManaCost      string            `json:"mana_cost"`
+	Cmc           float64           `json:"cmc"`
+	TypeLine      string            `json:"type_line"`
+	OracleText    string            `json:"oracle_text"`
+	Power         string            `json:"power"`
+	Toughness     string            `json:"toughness"`
+	Defence       string            `json:"defense"`
+	Loyalty       string            `json:"loyalty"`
+	HandModifier  string            `json:"hand_modifier"`
+	LifeModifier  string            `json:"life_modifier"`
+	Colors        []string          `json:"colors"`
+	ColorIdentity []string          `json:"color_identity"`
+	Keywords      []string          `json:"keywords"`
+	ProducedMana  []string          `json:"produced_mana"`
 	// Legalities    map[string]string  `json:"legalities"`
 	Games       []string `json:"games"`
 	Reserved    bool     `json:"reserved"`
@@ -66,7 +67,7 @@ type Card struct {
 
 func parseCardsFromFile() []Card {
 
-	jsonFile, err := os.Open("data/default-cards-20250404213404.json")
+	jsonFile, err := os.Open("data/oracle-cards-20250429210412.json")
 	if err != nil {
 		slog.Error(err.Error())
 	}
@@ -77,29 +78,64 @@ func parseCardsFromFile() []Card {
 	var cards []Card
 	json.Unmarshal(byteValue, &cards)
 
-	var uniqueCards []Card
-	var duplicateCards []Card
-	oracleIDMap := make(map[string]bool)
+	// var uniqueCards []Card
+	// var duplicateCards []Card
+	// oracleIDMap := make(map[string]bool)
 
-	for _, card := range cards {
-		if oracleIDMap[card.OracleID] {
-			duplicateCards = append(duplicateCards, card)
-		} else {
-			oracleIDMap[card.OracleID] = true
-			uniqueCards = append(uniqueCards, card)
-		}
-	}
+	// for _, card := range cards {
+	// 	if oracleIDMap[card.OracleID] {
+	// 		duplicateCards = append(duplicateCards, card)
+	// 	} else {
+	// 		oracleIDMap[card.OracleID] = true
+	// 		uniqueCards = append(uniqueCards, card)
+	// 	}
+	// }
 	// cards = uniqueCards
 
 	slog.Info("Number of total cards", "count", len(cards))
-	slog.Info("Number of unique cards:", "count", len(uniqueCards))
-	slog.Info("Number of duplicate cards:", "count", len(duplicateCards))
+	// slog.Info("Number of unique cards:", "count", len(uniqueCards))
+	// slog.Info("Number of duplicate cards:", "count", len(duplicateCards))
 
 	// for i := 0; i < len(cards); i++ {
 	// 	fmt.Printf("Card ID: "+cards[i].ScryfallID+" Remaining cards: %d\n", len(cards)-i-1)
 	// }
 
-	return uniqueCards
+	return cards
+}
+
+func updateCollection(client *weaviate.Client) {
+	// var cards []Card = parseCardsFromFile()
+
+	vabatchSize := 20
+	className := "Mtguru"
+	classProperties := []string{"title"}
+
+	getBatchWithCursor := func(client *weaviate.Client,
+		className string, classProperties []string, batchSize int, cursor string) (*models.GraphQLResponse, error) {
+		fields := []graphql.Field{}
+		for _, prop := range classProperties {
+			fields = append(fields, graphql.Field{Name: prop})
+		}
+		fields = append(fields, graphql.Field{Name: "_additional { id vector }"})
+
+		get := client.GraphQL().Get().
+			WithClassName(className).
+			// Optionally retrieve the vector embedding by adding `vector` to the _additional fields
+			WithFields(fields...).
+			WithLimit(batchSize)
+
+		if cursor != "" {
+			return get.WithAfter(cursor).Do(context.Background())
+		}
+		return get.Do(context.Background())
+	}
+
+	response, err := getBatchWithCursor(client, className, classProperties, vabatchSize, "")
+	if err != nil {
+		slog.Error("Error fetching batch with cursor", "error", err)
+		return
+	}
+	slog.Info("Batch fetched successfully", "response", response)
 }
 
 func populateIndex(client *weaviate.Client) {
@@ -120,7 +156,7 @@ func populateIndex(client *weaviate.Client) {
 				"name":           cards[i].Name,
 				"released_at":    cards[i].ReleasedAt,
 				"scryfall_uri":   cards[i].ScryfallURI,
-				// "image_uris":     cards[i].ImageURIs,
+				"image_uris":     cards[i].ImageURIs,
 				"mana_cost":      cards[i].ManaCost,
 				"cmc":            cards[i].Cmc,
 				"type_line":      cards[i].TypeLine,
@@ -169,6 +205,7 @@ func populateIndex(client *weaviate.Client) {
 
 		slog.Info(fmt.Sprintf("Batching objects from index %d to %d\n", i, end))
 		batchRes, err := client.Batch().ObjectsBatcher().WithObjects(objects[i:end]...).Do(context.Background())
+
 		if err != nil {
 			fmt.Println("Batch operation failed:", err.Error())
 			return
@@ -196,6 +233,25 @@ func createIndex(client *weaviate.Client) {
 				"dimensions":       1024, // Optional (e.g. 1024, 512, 256)
 			},
 			"generative-cohere": map[string]interface{}{},
+			"vectorizePropertyName": map[string]bool{
+				"scryfall_id":    false,
+				"oracle_id":      false,
+				"multiverse_ids": false,
+				"mtgo_id":        false,
+				"tcgplayer_id":   false,
+				"scryfall_uri":   false,
+				"image_uris":     false,
+				"games":          false,
+				"reserved":       false,
+				"game_changer":   false,
+				"finishes":       false,
+				"set_id":         false,
+				"rulings_uri":    false,
+				"digital":        false,
+				"card_back_id":   false,
+				"artist_ids":     false,
+				"border_color":   false,
+			},
 		},
 		Properties: []*models.Property{
 			{
@@ -234,10 +290,36 @@ func createIndex(client *weaviate.Client) {
 				Name:     "scryfall_uri",
 				DataType: []string{"string"},
 			},
-			// {
-			// 	Name:     "image_uris",
-			// 	DataType: []string{"object"},
-			// },
+			{
+				Name:     "image_uris",
+				DataType: []string{"object"},
+				NestedProperties: []*models.NestedProperty{
+					{
+						Name:     "small",
+						DataType: []string{"text"},
+					},
+					{
+						Name:     "normal",
+						DataType: []string{"text"},
+					},
+					{
+						Name:     "large",
+						DataType: []string{"text"},
+					},
+					{
+						Name:     "png",
+						DataType: []string{"text"},
+					},
+					{
+						Name:     "art_crop",
+						DataType: []string{"text"},
+					},
+					{
+						Name:     "border_crop",
+						DataType: []string{"text"},
+					},
+				},
+			},
 			{
 				Name:     "mana_cost",
 				DataType: []string{"string"},

@@ -1,0 +1,189 @@
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  background: #2d1f2f;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+  max-width: 288px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2.5/3.5;
+  object-fit: cover;
+}
+
+.card-image-placeholder {
+  width: 100%;
+  aspect-ratio: 2.5/3.5;
+  background: linear-gradient(135deg, #2d1f2f, #1a1614);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.placeholder-text {
+  color: #e4d5b7;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0.7;
+}
+
+.match-bar {
+  height: 20px;
+  background: rgba(26, 22, 20, 0.8);
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+}
+
+.match-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #2d1f2f, #ffd700);
+  position: relative;
+  transition: width 0.3s ease-in-out;
+}
+
+.match-value {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1a1614;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-shadow: 0 0 2px rgba(255, 215, 0, 0.5);
+}
+
+.card-info {
+  padding: 0.75rem;
+  background: linear-gradient(to bottom, #2d1f2f, #1a1614);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-distance {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d1f2f, #1a1614);
+  border: 2px solid #ffd700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.distance-value {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.card-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffd700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.card-set {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #e4d5b7;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  
+  .card-item {
+    max-width: 216px;
+  }
+  
+  .card-distance {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .distance-value {
+    font-size: 0.8rem;
+  }
+  
+  .card-header {
+    gap: 0.5rem;
+  }
+  
+  .match-bar {
+    height: 16px;
+  }
+  
+  .match-value {
+    font-size: 0.7rem;
+  }
+  
+  .card-info {
+    padding: 0.5rem;
+  }
+  
+  .card-name {
+    font-size: 0.8rem;
+  }
+  
+  .card-set {
+    font-size: 0.7rem;
+  }
+} 

@@ -8,8 +8,8 @@ import (
 
 	"github.com/rs/cors"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/auth"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
+	"github.com/weaviate/weaviate/entities/models"
 
 	"mtguru/packages/custom_logger"
 )
@@ -26,9 +26,9 @@ func init() {
 func createClient(conf EnvironmentConfig) *weaviate.Client {
 
 	cfg := weaviate.Config{
-		Host:       conf.WEAVIATE_URL,
-		Scheme:     "https",
-		AuthConfig: auth.ApiKey{Value: conf.WEAVIATE_API_KEY},
+		Host:   conf.WEAVIATE_URL,
+		Scheme: "http",
+		// AuthConfig: auth.ApiKey{Value: conf.WEAVIATE_API_KEY},
 		Headers: map[string]string{
 			"X-OpenAI-Api-Key": conf.OPEN_API_KEY,
 		},
@@ -45,12 +45,11 @@ func createClient(conf EnvironmentConfig) *weaviate.Client {
 	}
 
 	slog.Debug("%v", "is_remote_server_up", live)
-
 	return client
 
 }
 
-func searchDatabase(search_string string) {
+func searchDatabase(search_string string) *models.GraphQLResponse {
 
 	// search_string := "make my units fly"
 
@@ -71,12 +70,17 @@ func searchDatabase(search_string string) {
 			// graphql.Field{Name: "keywords"},
 			// graphql.Field{Name: "flavor_text"},
 			// graphql.Field{Name: "rarity"},
+			graphql.Field{Name: "scryfall_uri"},
+			graphql.Field{Name: "image_uris", Fields: []graphql.Field{
+				{Name: "normal"},
+				{Name: "large"},
+			}},
 			graphql.Field{Name: "_additional", Fields: []graphql.Field{
 				{Name: "distance"}}},
 		).
 		WithNearText(client.GraphQL().NearTextArgBuilder().
 			WithConcepts([]string{search_string})).
-		WithLimit(3).
+		WithLimit(29).
 		Do(ctx)
 
 	if err != nil {
@@ -86,6 +90,7 @@ func searchDatabase(search_string string) {
 	slog.Info("Prompt:", "prompt", search_string)
 	slog.Info("Response:", "matches", response)
 
+	return response
 }
 
 func alive(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +113,20 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("Received search request:", "query", requestBody.Query, "filters", requestBody.Filters)
-	searchDatabase(requestBody.Query)
+	results := searchDatabase(requestBody.Query)
+
+	responseJSON, err := json.Marshal(results)
+	if err != nil {
+		slog.Debug("Error marshalling response", "error", err.Error())
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseJSON)
+
+	// searchDatabase(requestBody.Query)
 }
 
 func initHandler() http.Handler {
@@ -124,8 +142,9 @@ func main() {
 	// createIndex(client)
 	// populateIndex(client)
 	// searchDatabase(client)
+	// updateCollection(client)
 	handler := initHandler()
-	slog.Info("Starting server on port 8080...")
-	http.ListenAndServe(":8080", handler)
+	slog.Info("Starting server on port 8888...")
+	http.ListenAndServe(":8888", handler)
 
 }
