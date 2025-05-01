@@ -10,6 +10,7 @@ import (
 
 	"github.com/rs/cors"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
+	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
 	"github.com/weaviate/weaviate/entities/models"
 )
@@ -55,9 +56,23 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 	// search_string := "make my units fly"
 
 	ctx := context.Background()
+
+	where := filters.Where().
+		WithOperator(filters.And).
+		WithOperands([]*filters.WhereBuilder{
+			filters.Where().
+				WithPath([]string{"set_type"}).
+				WithOperator(filters.NotEqual).
+				WithValueString("token"),
+			filters.Where().
+				WithPath([]string{"set_type"}).
+				WithOperator(filters.NotEqual).
+				WithValueString("memorabilia"),
+		})
+
 	response, err := client.GraphQL().Get().
 		WithClassName("Mtguru").
-		// WithFields is used to specify the fields you want to retrieve from the cards matched
+		// WithFields is used to specify the fields you want to retrieve from the cards matched in the json resposne
 		WithFields(
 			graphql.Field{Name: "name"},
 			// graphql.Field{Name: "mana_cost"},
@@ -71,6 +86,7 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 			// graphql.Field{Name: "keywords"},
 			// graphql.Field{Name: "flavor_text"},
 			// graphql.Field{Name: "rarity"},
+			graphql.Field{Name: "set_type"},
 			graphql.Field{Name: "scryfall_uri"},
 			graphql.Field{Name: "image_uris", Fields: []graphql.Field{
 				{Name: "normal"},
@@ -82,6 +98,7 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 		WithNearText(client.GraphQL().NearTextArgBuilder().
 			WithConcepts([]string{search_string})).
 		WithLimit(29).
+		WithWhere(where).
 		Do(ctx)
 
 	if err != nil {
@@ -89,7 +106,7 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 	}
 
 	slog.Info("Prompt:", "prompt", search_string)
-	slog.Info("Response:", "matches", response)
+	slog.Debug("Response:", "matches", response)
 
 	return response
 }
