@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"mtguru/packages/config"
 	"mtguru/packages/custom_logger"
@@ -14,6 +15,18 @@ import (
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
 	"github.com/weaviate/weaviate/entities/models"
 )
+
+type MTGuruSearchRequestFilters struct {
+	SetType string `json:"set_type"`
+	Color   string `json:"colors"`
+	Rarity  string `json:"rarity"`
+}
+
+type MTGuruSearchRequest struct {
+	Query   string                     `json:"query"`
+	Filters MTGuruSearchRequestFilters `json:"filters"`
+	// Filters map[string]string `json:"filters"`
+}
 
 var activeConfig config.EnvironmentConfig
 var client *weaviate.Client
@@ -51,9 +64,13 @@ func createClient(conf config.EnvironmentConfig) *weaviate.Client {
 
 }
 
-func searchDatabase(search_string string) *models.GraphQLResponse {
+func searchDatabase(search_string string, search_filters MTGuruSearchRequestFilters) *models.GraphQLResponse {
 
 	// search_string := "make my units fly"
+
+	slog.Info(fmt.Sprintf("SetType: %v", search_filters.SetType))
+	slog.Info(fmt.Sprintf("Color: %v", search_filters.Color))
+	slog.Info(fmt.Sprintf("Rarity: %v", search_filters.Rarity))
 
 	ctx := context.Background()
 
@@ -70,6 +87,34 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 				WithValueString("memorabilia"),
 		})
 
+	// if search_filters.SetType != "" {
+	// 	where = where.WithOperands([]*filters.WhereBuilder{
+	// 		filters.Where().
+	// 			WithPath([]string{"set_type"}).
+	// 			WithOperator(filters.Equal).
+	// 			WithValueString(search_filters.SetType),
+	// 	})
+	// }
+	slog.Debug(string(search_filters.Color[0]))
+	// if search_filters.Color != "" {
+	// 	string_color := string(search_filters.Color[0])
+	// 	where = where.WithOperands([]*filters.WhereBuilder{
+	// 		filters.Where().
+	// 			WithPath([]string{"colors"}).
+	// 			WithOperator(filters.ContainsAny).
+	// 			WithValueString(strings.ToUpper(string_color)),
+	// 	})
+	// }
+
+	// if search_filters.Rarity != "" {
+	// 	where = where.WithOperands([]*filters.WhereBuilder{
+	// 		filters.Where().
+	// 			WithPath([]string{"rarity"}).
+	// 			WithOperator(filters.Equal).
+	// 			WithValueString(search_filters.Rarity),
+	// 	})
+	// }
+
 	response, err := client.GraphQL().Get().
 		WithClassName("Mtguru").
 		// WithFields is used to specify the fields you want to retrieve from the cards matched in the json resposne
@@ -81,7 +126,7 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 			// graphql.Field{Name: "power"},
 			// graphql.Field{Name: "toughness"},
 			// graphql.Field{Name: "loyalty"},
-			// graphql.Field{Name: "colors"},
+			graphql.Field{Name: "colors"},
 			graphql.Field{Name: "set_name"},
 			// graphql.Field{Name: "keywords"},
 			// graphql.Field{Name: "flavor_text"},
@@ -111,11 +156,6 @@ func searchDatabase(search_string string) *models.GraphQLResponse {
 	return response
 }
 
-type MTGuruSearchRequest struct {
-	Query   string            `json:"query"`
-	Filters map[string]string `json:"filters"`
-}
-
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	var requestBody MTGuruSearchRequest
@@ -127,7 +167,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("Received search request:", "query", requestBody.Query, "filters", requestBody.Filters)
-	results := searchDatabase(requestBody.Query)
+
+	results := searchDatabase(requestBody.Query, requestBody.Filters)
 
 	responseJSON, err := json.Marshal(results)
 	if err != nil {

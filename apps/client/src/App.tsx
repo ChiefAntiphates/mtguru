@@ -7,16 +7,16 @@ import { Card, SearchResponse } from './types/card'
 import './App.css'
 
 interface FilterOptions {
-  type: string
-  color: string
+  set_type: string
+  colors: string
   rarity: string
   [key: string]: string
 }
 
 function App() {
   const [filters, setFilters] = useState<FilterOptions>({
-    type: '',
-    color: '',
+    set_type: '',
+    colors: '',
     rarity: '',
   })
   const [cards, setCards] = useState<Card[]>([])
@@ -24,6 +24,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [searchAttempted, setSearchAttempted] = useState(false)
   const [renderError, setRenderError] = useState<string | null>(null)
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false)
 
   // Error boundary for rendering
   useEffect(() => {
@@ -149,8 +150,12 @@ function App() {
       </header>
       
       <main className="app-main">
-        <SearchBar onSearch={handleSearch} />
-        <Filters onFilterChange={setFilters} />
+        <SearchBar 
+          onSearch={handleSearch} 
+          onFilterToggle={() => setIsFiltersExpanded(!isFiltersExpanded)}
+          isFiltersExpanded={isFiltersExpanded}
+        />
+        {isFiltersExpanded && <Filters onFilterChange={(filters) => setFilters(filters)} />}
         {renderContent()}
       </main>
     </div>
