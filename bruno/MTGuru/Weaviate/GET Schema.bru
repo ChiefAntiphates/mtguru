@@ -1,0 +1,15 @@
+meta {
+  name: GET Schema
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}://{{weaviate_host}}:/v1/schema
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{weaviate_api_key}}
+}
