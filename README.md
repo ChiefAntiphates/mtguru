@@ -7,6 +7,10 @@
 - packages: for packages/modules 
 
 
+# Data sources
+
+MTG card dump downloaded from [here](https://scryfall.com/docs/api/bulk-data) (default cards)
+
 # How to run the search stuff
 
 In `services/ingestion/main.go`, moddify the search_string on line 50

@@ -1,0 +1,80 @@
+.filters-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.filters-toggle {
+  background-color: #4a2d4a; /* Deeper purple */
+  color: #ffd700; /* Golden text */
+  border: 1px solid rgba(255, 215, 0, 0.2); /* Subtle golden border */
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  width: 100%;
+  max-width: 200px;
+}
+
+.filters-toggle:hover {
+  background-color: #5a375a; /* Lighter purple */
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); /* Golden glow */
+}
+
+.filters-content {
+  background-color: #2d1f2f; /* Purple background */
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid rgba(255, 215, 0, 0.2); /* Subtle golden border */
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: bold;
+  color: #ffd700; /* Golden text */
+}
+
+.filter-group select {
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 4px;
+  background-color: #1a1614; /* Dark brown background */
+  color: #e4d5b7; /* Warm light text */
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+}
+
+.filter-group select option {
+  background-color: #1a1614; /* Dark brown background */
+  color: #e4d5b7; /* Warm light text */
+}
+
+@media (max-width: 768px) {
+  .filters-container {
+    padding: 0 0.5rem;
+  }
+  
+  .filters-content {
+    grid-template-columns: 1fr;
+  }
+} 

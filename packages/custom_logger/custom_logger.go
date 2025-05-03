@@ -63,9 +63,25 @@ func newPrettyHandler(out io.Writer, opts PrettyHandlerOptions) *PrettyHandler {
 
 func CreateLogger() {
 
+	loglevelStr := os.Getenv("LOG_LEVEL")
+	var logLevel slog.Level
+
+	switch loglevelStr {
+	case "debug":
+		logLevel = slog.LevelDebug
+	case "info":
+		logLevel = slog.LevelInfo
+	case "warn":
+		logLevel = slog.LevelWarn
+	case "error":
+		logLevel = slog.LevelError
+	default:
+		logLevel = slog.LevelDebug
+	}
+
 	opts := PrettyHandlerOptions{
 		SlogOpts: slog.HandlerOptions{
-			Level: slog.LevelDebug,
+			Level: logLevel,
 		},
 	}
 

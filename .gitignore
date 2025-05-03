@@ -25,4 +25,5 @@ go.work.sum
 .env
 
 data/default-cards-*.json
+data/oracle-cards-*.json
 config.toml
