@@ -1,0 +1,11 @@
+meta {
+  name: DELETE Schema
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{protocol}}://{{host}}:{{port}}/v1/schema/Card
+  body: none
+  auth: inherit
+}
