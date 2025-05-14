@@ -8,6 +8,8 @@ import (
 
 	"mtguru/packages/config"
 	"mtguru/packages/custom_logger"
+
+	"github.com/joho/godotenv"
 )
 
 var activeConfig config.EnvironmentConfig
@@ -16,7 +18,7 @@ var client *weaviate.Client
 func init() {
 	custom_logger.CreateLogger()
 	activeConfig = config.CreateConfig()
-	client = createClient(activeConfig)
+	// client = createClient(activeConfig)
 }
 
 func createClient(conf config.EnvironmentConfig) *weaviate.Client {
@@ -46,8 +48,12 @@ func createClient(conf config.EnvironmentConfig) *weaviate.Client {
 }
 
 func main() {
-	createIndex(client)
-	populateIndex(client)
+	err := godotenv.Load()
+	if err != nil {
+		slog.Error("Error loading .env file")
+	}
+	// createIndex(client)
+	populateIndex()
 	// searchDatabase(client)
 	// updateCollection(client)
 }
