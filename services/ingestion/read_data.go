@@ -83,10 +83,6 @@ type PromptFields struct {
 	Rarity        string   `json:"rarity,omitempty"`
 }
 
-func (c Card) String() string {
-	return c.Name
-}
-
 func parseCardsFromFile() []Card {
 
 	// jsonFile, err := os.Open("data/oracle-cards-20250505090231.json")
@@ -188,8 +184,7 @@ func extractCardVectorData(card Card) string {
 	if card.ProducedMana != nil {
 		vectorText += " Produces " + strings.Join(*card.ProducedMana, ",") + "mana."
 	}
-	if *card.Keywords != nil {
-		// && len(*card.Keywords) > 0
+	if card.Keywords != nil && len(*card.Keywords) > 0 {
 		vectorText += " " + strings.Join(*card.Keywords, ",")
 	}
 	return strings.ReplaceAll(strings.TrimSpace(vectorText), "\n", " ")
@@ -224,27 +219,26 @@ func populateIndex() {
 
 		slog.Info(string(payloadJson))
 
-		// // Make request to create Guru Insert
-		// req, err := http.NewRequest("POST", os.Getenv("CLOUDFLARE_WORKER_URL")+"/insert", bytes.NewBuffer(payloadJson))
-		// if err != nil {
-		// 	slog.Error(err.Error())
-		// }
+		// Make request to create Guru Insert
+		req, err := http.NewRequest("POST", os.Getenv("CLOUDFLARE_WORKER_URL")+"/insert", bytes.NewBuffer(payloadJson))
+		if err != nil {
+			slog.Error(err.Error())
+		}
 
-		// client := &http.Client{}
-		// resp, err := client.Do(req)
-		// if err != nil {
-		// 	slog.Error(err.Error())
-		// }
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			slog.Error(err.Error())
+		}
 
-		// // Close response body
-		// defer resp.Body.Close()
+		// Close response body
+		defer resp.Body.Close()
 
-		// body, err := io.ReadAll(resp.Body)
-		// if err != nil {
-		// 	slog.Error(err.Error())
-		// }
-		// slog.Info(string(body))
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			slog.Error(err.Error())
+		}
+		slog.Info(string(body))
 	}
 
-	// map color identity to words
 }
