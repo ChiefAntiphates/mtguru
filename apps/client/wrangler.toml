@@ -1,6 +1,9 @@
 name = "mtguru"
 compatibility_date = "2025-05-18"
 
+routes = [
+    { pattern = "mtguru.com", custom_domain = true}
+]
 
 [assets]
 directory = "./dist"
