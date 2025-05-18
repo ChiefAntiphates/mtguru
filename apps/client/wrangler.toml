@@ -1,5 +1,5 @@
 name = "mtguru"
-compatibility_date = "2025-04-1"
+# compatibility_date = "2025-04-1"
 
-# [assets]
-# directory = "/dist"
+[assets]
+directory = "./dist"
