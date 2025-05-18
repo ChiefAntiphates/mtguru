@@ -29,4 +29,5 @@ data/default-cards-*.json
 data/oracle-cards-*.json
 config.toml
 apps/client/node_modules
+node_modules
 
