@@ -4,3 +4,6 @@ compatibility_date = "2025-05-18"
 
 [assets]
 directory = "./dist"
+
+[observability.logs]
+enabled = true
