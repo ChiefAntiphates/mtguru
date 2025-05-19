@@ -13,5 +13,5 @@ routes = [
 ]
 
 
-[observability.logs]
-enabled = true
+# [observability.logs]
+# enabled = true
