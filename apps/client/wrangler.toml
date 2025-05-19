@@ -1,12 +1,17 @@
 name = "mtguru"
-compatibility_date = "2025-05-18"
+compatibility_date = "2025-04-28"
+
+pages_build_output_dir = "./dist"
+
+
+[vars]
+# API_URL = "http://localhost:8888"
+VITE_API_URL = "https://internal.mtguru.com"
 
 routes = [
     { pattern = "mtguru.com", custom_domain = true}
 ]
 
-[assets]
-directory = "./dist"
 
 [observability.logs]
 enabled = true

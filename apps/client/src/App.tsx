@@ -14,6 +14,7 @@ interface FilterOptions {
 }
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL
   const [filters, setFilters] = useState<FilterOptions>({
     set_type: '',
     colors: '',
@@ -51,8 +52,8 @@ function App() {
     setRenderError(null)
 
     try {
-      console.log('Sending request to:', 'https://internal.mtguru.com/api/search')
-      const response = await fetch('https://internal.mtguru.com/api/search', {
+      console.log('Sending request to:', API_URL + '/api/search')
+      const response = await fetch(API_URL + '/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
