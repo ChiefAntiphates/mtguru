@@ -24,9 +24,12 @@ go.work.sum
 # env file
 .env
 
+# misc
 data/default-cards-*.json
 data/oracle-cards-*.json
 config.toml
 
 services/vectorize-tutorial/*
 services/embeddings-tutorial/*
+apps/client/node_modules
+
