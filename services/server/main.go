@@ -9,6 +9,9 @@ import (
 	"mtguru/packages/custom_logger"
 	"net/http"
 
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/rs/cors"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
@@ -35,7 +38,7 @@ func init() {
 	// init is called before main, so we can set up our logger and client here
 	custom_logger.CreateLogger()
 	activeConfig = config.CreateConfig()
-	client = createClient(activeConfig)
+	// client = createClient(activeConfig)
 }
 
 func createClient(conf config.EnvironmentConfig) *weaviate.Client {
@@ -178,6 +181,9 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "https://mtguru.com")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJSON)
 
@@ -188,15 +194,32 @@ func initHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	// mux.HandleFunc("GET /api/health", alive)
-	mux.HandleFunc("POST /api/search", searchHandler)
+	mux.HandleFunc("/api/search", searchHandler)
+	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
 	return cors.Default().Handler(mux)
 
+}
+
+func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	slog.Info("Received request:", "request", request)
+
+	response := events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       "Hello from Lambda!",
+	}
+
+	return response, nil
 }
 
 func main() {
 
 	handler := initHandler()
-	slog.Info("Starting server on port 8888...")
-	http.ListenAndServe(":8888", handler)
-
+	// slog.Info("Starting server on port 8888...")
+	lambda.Start(httpadapter.NewV2(handler).ProxyWithContext)
+	// http.ListenAndServe(":8888", handler)
+	// lambda.Start(handler)
 }
