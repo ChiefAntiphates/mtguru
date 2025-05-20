@@ -1,0 +1,15 @@
+meta {
+  name: APIGW POST:/api/search copy
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://x6vx7p4yzf.execute-api.eu-north-1.amazonaws.com/api/search
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {"query": "make dragons stronger"}
+}
