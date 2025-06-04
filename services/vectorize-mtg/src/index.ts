@@ -35,6 +35,7 @@ interface InsertBody {
 
 interface QueryBody {
 	query: string;
+	count?: number;
 }
 
 export default {
@@ -88,6 +89,7 @@ export default {
 			const body = await readRequestBody<QueryBody>(request);
 
 			var userQuery = body.query
+			var count = body.count ? body.count : 10
 
 			const queryVector: EmbeddingResponse = await env.AI.run(
 				"@cf/baai/bge-base-en-v1.5",
@@ -97,12 +99,15 @@ export default {
 			);
 		
 			const matches = await env.VECTORIZE.query(queryVector.data[0], {
-				topK: 3,
+				topK: count,
 				returnValues: true,
 				returnMetadata: "all",
 			});
 			return Response.json({
-				matches: matches,
+				count: matches.count,
+				matches: matches.matches.map(({ values, ...rest }) => { // We don't need to send the vector values
+					return rest
+				}),
 			});
 		}
 

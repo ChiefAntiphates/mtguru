@@ -9,6 +9,8 @@ require (
 	github.com/weaviate/weaviate-go-client/v4 v4.16.1
 )
 
+require github.com/jinzhu/copier v0.4.0 // indirect
+
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
@@ -33,6 +35,7 @@ require (
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
+	golang.org/x/sync v0.14.0
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
