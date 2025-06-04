@@ -32,4 +32,5 @@ config.toml
 services/vectorize-tutorial/*
 services/embeddings-tutorial/*
 apps/client/node_modules
+node_modules
 

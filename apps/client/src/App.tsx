@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import SearchBar from './components/SearchBar'
 import Filters from './components/Filters'
 import CardGrid from './components/CardGrid'
@@ -14,6 +14,7 @@ interface FilterOptions {
 }
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL
   const [filters, setFilters] = useState<FilterOptions>({
     set_type: '',
     colors: '',
@@ -51,8 +52,8 @@ function App() {
     setRenderError(null)
 
     try {
-      console.log('Sending request to:', 'http://localhost:8888/api/search')
-      const response = await fetch('http://localhost:8888/api/search', {
+      console.log('Sending request to:', API_URL + '/api/search')
+      const response = await fetch(API_URL + '/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
