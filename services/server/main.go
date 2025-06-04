@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/rs/cors"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 )
 
 type MTGuruSearchRequestFilters struct {
@@ -52,7 +51,6 @@ type Metadata struct {
 }
 
 var activeConfig config.EnvironmentConfig
-var client *weaviate.Client
 
 func init() {
 	// init is called before main, so we can set up our logger and client here
