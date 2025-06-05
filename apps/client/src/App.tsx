@@ -3,7 +3,7 @@ import SearchBar from './components/SearchBar'
 import Filters from './components/Filters'
 import CardGrid from './components/CardGrid'
 import mtguruLogo from './assets/mtguru-logo.png'
-import { Card, SearchResponse } from './types/card'
+import { Match, SearchResponse } from './types/responses'
 import './App.css'
 
 interface FilterOptions {
@@ -20,7 +20,7 @@ function App() {
     colors: '',
     rarity: '',
   })
-  const [cards, setCards] = useState<Card[]>([])
+  const [cards, setCards] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchAttempted, setSearchAttempted] = useState(false)
@@ -84,26 +84,15 @@ function App() {
       }
 
       console.log('Parsed response data:', data)
+
+      console.log('Number of cards found:', data.count)
       
-      // Check for different possible response formats
-      if (data.data?.Get?.Mtguru) {
-        const searchResults = data.data.Get.Mtguru
-        console.log('Number of cards found:', searchResults.length)
-        
-        if (searchResults.length === 0) {
-          console.log('No cards found for query:', query)
-        }
-        
-        setCards(searchResults)
-      } else if (data.matches?.data?.Get?.Mtguru) {
-        // Handle old format
-        const searchResults = data.matches.data.Get.Mtguru
-        console.log('Number of cards found (old format):', searchResults.length)
-        setCards(searchResults)
-      } else {
-        console.error('Unexpected response format:', data)
-        throw new Error('Unexpected response format from server')
+      if (data.count === 0) {
+        console.log('No cards found for query:', query)
       }
+      
+      setCards(data.matches)
+
     } catch (error) {
       console.error('Error during search:', error)
       setError(error instanceof Error ? error.message : 'An error occurred during search')
