@@ -34,3 +34,5 @@ services/embeddings-tutorial/*
 apps/client/node_modules
 node_modules
 
+bootstrap
+myFunction.zip

@@ -14,7 +14,7 @@ require github.com/jinzhu/copier v0.4.0 // indirect
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/aws/aws-lambda-go v1.48.0 // indirect
+	github.com/aws/aws-lambda-go v1.49.0 // indirect
 	github.com/awslabs/aws-lambda-go-api-proxy v0.16.2 // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
 	github.com/go-openapi/errors v0.22.0 // indirect
