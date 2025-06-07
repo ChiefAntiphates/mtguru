@@ -66,10 +66,9 @@ export default {
 			return Response.json(response);
 		}
 
+		// Vectorise and insert new card into the index
 		if (path === "/insert") {
 			const body = await readRequestBody<InsertBody>(request);
-
-			// TODO: Consider parsing the payload into a different style string for better matching?
 			const modelResp: EmbeddingResponse = await env.AI.run(
 				"@cf/baai/bge-base-en-v1.5",
 				{text: JSON.stringify(body.data)}
@@ -85,6 +84,7 @@ export default {
 			return Response.json(inserted);
 		}
 
+		// Search index by vectorizing a query and checking distances
 		if (path === "/search") {
 			const body = await readRequestBody<QueryBody>(request);
 

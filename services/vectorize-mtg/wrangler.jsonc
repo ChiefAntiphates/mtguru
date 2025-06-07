@@ -13,7 +13,7 @@
 	"vectorize": [
 		{
 			"binding": "VECTORIZE",
-			"index_name": "mtguru-cosine-index"
+			"index_name": "mtguru-prod-index"
 		}
 	],
 	"ai": {

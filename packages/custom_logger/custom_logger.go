@@ -76,7 +76,7 @@ func CreateLogger() {
 	case "error":
 		logLevel = slog.LevelError
 	default:
-		logLevel = slog.LevelDebug
+		logLevel = slog.LevelInfo
 	}
 
 	opts := PrettyHandlerOptions{
