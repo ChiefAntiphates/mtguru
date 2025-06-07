@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card } from '../types/card';
+import { Match } from '../types/responses';
 import './CardGrid.css';
 
 interface CardGridProps {
-  cards: Card[];
+  cards: Match[];
 }
 
 const CardGrid: React.FC<CardGridProps> = ({ cards }) => {
@@ -12,38 +12,34 @@ const CardGrid: React.FC<CardGridProps> = ({ cards }) => {
       {cards.map((card, index) => (
         <a 
           key={index} 
-          href={card.scryfall_uri} 
+          href={card.metadata.scryfall_uri} 
           target="_blank" 
           rel="noopener noreferrer"
           className="card-link"
         >
           <div className="card-item">
-            {card.image_uris?.large ? (
-              <img 
-                src={card.image_uris.large} 
-                alt={card.name}
-                className="card-image"
-                loading="lazy"
-              />
-            ) : (
-              <div className="card-image-placeholder">
-                <span className="placeholder-text">No Image Available</span>
-              </div>
-            )}
+            
+            <img 
+              src={card.metadata.image_url} 
+              alt={card.metadata.name}
+              className="card-image"
+              loading="lazy"
+            />
+           
             <div className="match-bar">
               <div 
                 className="match-progress" 
-                style={{ width: `${(1 - card._additional.distance) * 100}%` }}
+                style={{ width: `${card.score * 100}%` }}
               >
                 <span className="match-value">
-                  {Math.round((1 - card._additional.distance) * 100)}%
+                  {Math.round(card.score * 100)}%
                 </span>
               </div>
             </div>
             <div className="card-info">
-              <h3 className="card-name">{card.name}</h3>
+              <h3 className="card-name">{card.metadata.name}</h3>
               <div className="card-details">
-                <p className="card-set">{card.set_name}</p>
+                <p className="card-set">{card.metadata.set_name}</p>
               </div>
             </div>
           </div>
