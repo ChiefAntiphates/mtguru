@@ -11,9 +11,9 @@ import (
 )
 
 type EnvironmentConfig struct {
-	WEAVIATE_URL     string `toml:"WEAVIATE_URL"`
-	WEAVIATE_API_KEY string `toml:"WEAVIATE_API_KEY"`
-	OPEN_API_KEY     string `toml:"OPEN_API_KEY"`
+	// WEAVIATE_URL     string `toml:"WEAVIATE_URL"`
+	// WEAVIATE_API_KEY string `toml:"WEAVIATE_API_KEY"`
+	// OPEN_API_KEY     string `toml:"OPEN_API_KEY"`
 }
 
 type Environments struct {

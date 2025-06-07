@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program":"./services/ingestion/",
-            "cwd": "c:/Users/MXA1101/Documents/Coding/Personal Projects/mtguru"
+            "cwd": "C:/Users/harry/code/mtguru"
         }
     ]
 }
