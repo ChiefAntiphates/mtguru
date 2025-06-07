@@ -32,6 +32,7 @@ config.toml
 services/vectorize-tutorial/*
 services/embeddings-tutorial/*
 apps/client/node_modules
+apps/client/dist
 node_modules
 
 bootstrap
