@@ -32,6 +32,7 @@ type Card struct {
 	SetName       *string           `json:"set_name"`
 	Rarity        *string           `json:"rarity"`
 	GuruPrompt    string
+	// BorderColor   string `json:"border_color"`
 	// HandModifier *string `json:"hand_modifier,omitempty"` 		// too niche
 	// LifeModifier *string `json:"life_modifier,omitempty"`  		// too niche
 	// Colors        []string `json:"colors,omitempty"`				// omitted because color_identity achieves the same

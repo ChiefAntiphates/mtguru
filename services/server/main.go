@@ -126,5 +126,6 @@ func initHandler() http.Handler {
 func main() {
 	handler := initHandler()
 	slog.Info("Starting server on lambda...")
+	// http.ListenAndServe(":8888", handler)
 	lambda.Start(httpadapter.NewV2(handler).ProxyWithContext)
 }
