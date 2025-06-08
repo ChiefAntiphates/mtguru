@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import SearchBar from './components/SearchBar'
 import Filters from './components/Filters'
 import CardGrid from './components/CardGrid'
 import mtguruLogo from './assets/mtguru-logo.png'
-import { Card, SearchResponse } from './types/card'
+import { Match, SearchResponse } from './types/responses'
 import './App.css'
 
 interface FilterOptions {
@@ -14,12 +14,13 @@ interface FilterOptions {
 }
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL
   const [filters, setFilters] = useState<FilterOptions>({
     set_type: '',
     colors: '',
     rarity: '',
   })
-  const [cards, setCards] = useState<Card[]>([])
+  const [cards, setCards] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchAttempted, setSearchAttempted] = useState(false)
@@ -51,8 +52,8 @@ function App() {
     setRenderError(null)
 
     try {
-      console.log('Sending request to:', 'http://localhost:8888/api/search')
-      const response = await fetch('http://localhost:8888/api/search', {
+      console.log('Sending request to:', API_URL + '/api/search')
+      const response = await fetch(API_URL + '/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,26 +84,15 @@ function App() {
       }
 
       console.log('Parsed response data:', data)
+
+      console.log('Number of cards found:', data.count)
       
-      // Check for different possible response formats
-      if (data.data?.Get?.Mtguru) {
-        const searchResults = data.data.Get.Mtguru
-        console.log('Number of cards found:', searchResults.length)
-        
-        if (searchResults.length === 0) {
-          console.log('No cards found for query:', query)
-        }
-        
-        setCards(searchResults)
-      } else if (data.matches?.data?.Get?.Mtguru) {
-        // Handle old format
-        const searchResults = data.matches.data.Get.Mtguru
-        console.log('Number of cards found (old format):', searchResults.length)
-        setCards(searchResults)
-      } else {
-        console.error('Unexpected response format:', data)
-        throw new Error('Unexpected response format from server')
+      if (data.count === 0) {
+        console.log('No cards found for query:', query)
       }
+      
+      setCards(data.matches)
+
     } catch (error) {
       console.error('Error during search:', error)
       setError(error instanceof Error ? error.message : 'An error occurred during search')
