@@ -28,5 +28,14 @@ go.work.sum
 data/default-cards-*.json
 data/oracle-cards-*.json
 config.toml
-apps/client/node_modules
 
+services/vectorize-tutorial/*
+services/embeddings-tutorial/*
+apps/client/node_modules
+apps/client/dist
+node_modules
+
+bootstrap
+myFunction.zip
+
+.vscode

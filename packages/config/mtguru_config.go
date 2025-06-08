@@ -6,13 +6,14 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/pelletier/go-toml/v2"
 )
 
 type EnvironmentConfig struct {
-	WEAVIATE_URL     string `toml:"WEAVIATE_URL"`
-	WEAVIATE_API_KEY string `toml:"WEAVIATE_API_KEY"`
-	OPEN_API_KEY     string `toml:"OPEN_API_KEY"`
+	// WEAVIATE_URL     string `toml:"WEAVIATE_URL"`
+	// WEAVIATE_API_KEY string `toml:"WEAVIATE_API_KEY"`
+	// OPEN_API_KEY     string `toml:"OPEN_API_KEY"`
 }
 
 type Environments struct {
@@ -21,6 +22,11 @@ type Environments struct {
 }
 
 func CreateConfig() EnvironmentConfig {
+
+	err := godotenv.Load()
+	if err != nil {
+		slog.Error("Error loading .env file")
+	}
 
 	file, err := os.Open("config.toml")
 
@@ -58,9 +64,6 @@ func CreateConfig() EnvironmentConfig {
 	}
 
 	slog.Info("Config loaded successfully")
-	slog.Info("WEAVIATE_URL", "weaviate_url", activeConfig.WEAVIATE_URL)
-	slog.Info("WEAVIATE_API_KEY:", "weaviate_api_key", activeConfig.WEAVIATE_API_KEY)
-	slog.Info("OPEN_API_KEY:", "open_api_key", activeConfig.OPEN_API_KEY)
 
 	return activeConfig
 }

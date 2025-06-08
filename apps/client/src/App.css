@@ -103,6 +103,15 @@
   z-index: 1;
 }
 
+.site-footer {
+  margin-top: auto;
+  background-color: #111;
+  color: #fff;
+  text-align: center;
+  padding: 1em 0;
+  font-size: 0.9rem;
+}
+
 @keyframes titleGlow {
   0% {
     text-shadow: 
