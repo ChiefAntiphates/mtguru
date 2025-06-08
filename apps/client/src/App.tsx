@@ -148,6 +148,11 @@ function App() {
         {isFiltersExpanded && <Filters onFilterChange={(filters) => setFilters(filters)} />}
         {renderContent()}
       </main>
+      <footer className="site-footer">
+        MTGuru is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
+        <br/>
+        The literal and graphical information presented on this site about Magic: The Gathering, including card images and mana symbols, is copyright Wizards of the Coast, LLC.
+      </footer>
     </div>
   )
 }
